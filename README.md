@@ -1,5 +1,11 @@
 # Pharos Retinal Screening
 
+## Live demo
+
+Site: https://meganmenezes.github.io/pharos-demo/
+
+QR image: [assets/pharos-qr.png](assets/pharos-qr.png)
+
 A static, mobile-first retinal screening experience. It uses the browser camera for an on-device alignment and recording simulation; the captured photo is processed temporarily in memory and is not uploaded or saved. The result displays the ACRIMA sample `img18` and its paired 23% placeholder risk. That risk and the sample metrics are illustrative only, not calculated from the camera photo; the Pharos model is not run.
 
 ## Prepare the sample data
