@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5fbfc">
+  <meta name="description" content="Pharos retinal screening experience.">
+  <title>Pharos | Retinal Screening</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="page-shell">
+    <header class="topbar">
+      <a class="brand" href="./" aria-label="Pharos home">
+        <img src="assets/logo.png" alt="Pharos">
+      </a>
+      <div class="demo-badge"><span class="status-dot" aria-hidden="true"></span><span>CAMERA SCREENING</span></div>
+    </header>
+
+    <nav class="stepper" aria-label="Screening progress" hidden>
+      <span class="step-item is-current" data-step="capture" aria-current="step"><span class="step-number">01</span><span>Capture</span></span>
+      <span class="step-rule" aria-hidden="true"></span>
+      <span class="step-item" data-step="loading"><span class="step-number">02</span><span>Analysis</span></span>
+      <span class="step-rule" aria-hidden="true"></span>
+      <span class="step-item" data-step="results"><span class="step-number">03</span><span>Result</span></span>
+    </nav>
+
+    <main>
+      <section id="intro-screen" class="screen intro-screen" aria-labelledby="intro-title">
+        <div class="intro-copy">
+          <p class="eyebrow">MONASH DEEPNEURON <span>/</span> PHAROS</p>
+          <h1 id="intro-title">A clearer view of eye health.</h1>
+          <p class="intro-pitch">A guided retinal screening experience, from camera capture to a sample result.</p>
+          <button id="start-screening" class="capture-button intro-button" type="button"><span>Start screening</span><span aria-hidden="true">→</span></button>
+          <p class="intro-disclaimer">Screening only, not a diagnosis.</p>
+        </div>
+        <ol class="intro-steps" aria-label="Three screening steps">
+          <li><span>01</span><div><strong>Capture</strong><small>Align and record</small></div></li>
+          <li><span>02</span><div><strong>Review</strong><small>Find the clearest frame</small></div></li>
+          <li><span>03</span><div><strong>Result</strong><small>View a sample risk</small></div></li>
+        </ol>
+      </section>
+
+      <section id="capture-screen" class="screen capture-screen" aria-labelledby="capture-title" hidden>
+        <div class="screen-heading">
+          <p class="eyebrow">PHAROS <span>/</span> RETINAL SCREENING</p>
+          <h1 id="capture-title">Find your focus.</h1>
+          <p class="heading-note">Center your eye in the viewfinder and hold steady.</p>
+        </div>
+
+        <div class="capture-layout">
+          <div class="viewfinder camera-viewfinder" aria-label="Live camera viewfinder">
+            <video id="camera-video" autoplay muted playsinline hidden></video>
+            <div class="viewfinder-top"><span><i class="record-dot" aria-hidden="true"></i><span id="camera-label">CAMERA STANDBY</span></span><span id="focus-countdown">ALIGN</span></div>
+            <div class="target-ring" aria-hidden="true"><span class="target-cross"></span><span class="target-core"></span></div>
+            <span class="beam-light" aria-hidden="true"></span>
+            <div class="viewfinder-corners" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+            <div class="viewfinder-bottom"><span>LIVE VIEW</span><span>ON DEVICE</span></div>
+          </div>
+
+          <div class="capture-controls">
+            <div class="control-copy"><span class="control-index">01 / 03</span><h2>Steady your view</h2><p id="capture-status" aria-live="polite">Enable the camera to begin alignment.</p></div>
+            <button id="enable-camera" class="secondary-button camera-enable" type="button">Enable camera</button>
+            <button id="capture-button" class="capture-button" type="button" disabled>
+              <span class="shutter" aria-hidden="true"><span></span></span>
+              <span>Start recording</span>
+            </button>
+            <p class="camera-note"><span class="note-mark" aria-hidden="true">i</span> Your camera photo stays on this device.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="recording-screen" class="screen recording-screen" aria-labelledby="recording-title" hidden>
+        <div class="screen-heading compact-heading">
+          <p class="eyebrow">PHAROS <span>/</span> CAPTURE</p>
+          <h1 id="recording-title">Hold steady.</h1>
+          <p class="heading-note">Recording ends in five seconds. Stop sooner whenever you're ready.</p>
+        </div>
+        <div class="recording-layout">
+          <div class="recording-viewfinder">
+            <video id="recording-video" autoplay muted playsinline hidden></video>
+            <div id="recording-progress" class="recording-progress" style="--record-progress: 0deg"><span id="recording-countdown">5.0</span></div>
+            <span class="recording-live"><i aria-hidden="true"></i> REC <span id="recording-timer">00:00</span></span>
+          </div>
+          <div class="recording-controls">
+            <p class="eyebrow">FRAMES RECEIVED</p>
+            <strong id="recording-frame-count" class="recording-frame-count">00</strong>
+            <p class="heading-note">Frames are processed on this device. Nothing is uploaded.</p>
+            <button id="recording-stop" class="stop-button" type="button"><span class="stop-square" aria-hidden="true"></span> Stop recording</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="loading-screen" class="screen loading-screen" aria-labelledby="loading-title" hidden>
+        <div class="screen-heading compact-heading">
+          <p class="eyebrow">PHAROS <span>/</span> IMAGE PIPELINE</p>
+          <h1 id="loading-title">Selecting the clearest frame.</h1>
+          <p class="heading-note" id="pipeline-status" aria-live="polite">Preparing captured frames…</p>
+        </div>
+        <div class="pipeline-layout">
+          <div class="scan-panel">
+            <div class="scan-stage">
+              <canvas id="scan-canvas" width="600" height="600" aria-label="Retinal image quality analysis"></canvas>
+              <span class="canvas-corner corner-one" aria-hidden="true"></span><span class="canvas-corner corner-two" aria-hidden="true"></span>
+              <span class="sweep-beam" aria-hidden="true"></span>
+              <span id="frame-counter" class="frame-counter">FRAME -- / 06</span>
+            </div>
+            <div class="scan-caption"><span class="scan-indicator" aria-hidden="true"></span><span id="scan-caption-text">Waiting for capture</span></div>
+            <div id="filmstrip" class="filmstrip" aria-label="Captured frames">
+              <div class="film-frame" data-film-frame="0"><img alt="Soft focus frame"><span>01</span></div>
+              <div class="film-frame" data-film-frame="1"><img alt="Low light frame"><span>02</span></div>
+              <div class="film-frame" data-film-frame="2"><img alt="Overexposed frame"><span>03</span></div>
+              <div class="film-frame" data-film-frame="3"><img alt="Off-centre frame"><span>04</span></div>
+              <div class="film-frame" data-film-frame="4"><img alt="Noisy frame"><span>05</span></div>
+              <div class="film-frame" data-film-frame="5"><img alt="Sharpest frame"><span>06</span></div>
+            </div>
+          </div>
+          <div class="pipeline-details">
+            <div class="frames-heading"><div><p class="eyebrow">PIPELINE</p><h2>Image review</h2></div><span class="frame-count">LIVE</span></div>
+            <ol id="pipeline-steps" class="pipeline-steps" aria-label="Pipeline stages">
+              <li data-pipeline-step="received"><span>01</span><b>Frames received</b><i aria-hidden="true"></i></li>
+              <li data-pipeline-step="sharpness"><span>02</span><b>Sharpness scoring</b><i aria-hidden="true"></i></li>
+              <li data-pipeline-step="best"><span>03</span><b>Keep sharpest frame</b><i aria-hidden="true"></i></li>
+              <li data-pipeline-step="upload"><span>04</span><b>Sample upload simulation</b><i aria-hidden="true"></i></li>
+              <li data-pipeline-step="model"><span>05</span><b>Model scoring simulation</b><i aria-hidden="true"></i></li>
+            </ol>
+            <ol id="frame-list" class="frame-list" aria-label="Frame quality scores">
+              <li data-frame="0"><span class="frame-label">01 <b>Soft focus</b></span><span class="frame-score">--</span></li>
+              <li data-frame="1"><span class="frame-label">02 <b>Low light</b></span><span class="frame-score">--</span></li>
+              <li data-frame="2"><span class="frame-label">03 <b>Overexposed</b></span><span class="frame-score">--</span></li>
+              <li data-frame="3"><span class="frame-label">04 <b>Off-centre</b></span><span class="frame-score">--</span></li>
+              <li data-frame="4"><span class="frame-label">05 <b>Image noise</b></span><span class="frame-score">--</span></li>
+              <li data-frame="5"><span class="frame-label">06 <b>Clean frame</b></span><span class="frame-score">--</span></li>
+            </ol>
+            <div id="quality-summary" class="quality-summary" hidden>
+              <div class="quality-value"><span>AVERAGE QUALITY</span><strong><span id="average-score">--</span><small>%</small></strong></div>
+              <div class="quality-track" aria-hidden="true"><span id="quality-fill"></span></div>
+            </div>
+            <div id="analysis-state" class="analysis-state" hidden><span class="analysis-spinner" aria-hidden="true"></span><span>Analysing selected frame</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="results-screen" class="screen results-screen" aria-labelledby="results-title" hidden>
+        <div class="screen-heading compact-heading">
+          <p class="eyebrow">PHAROS <span>/</span> SCREENING RESULT</p>
+          <h1 id="results-title">Your screening result.</h1>
+          <p class="heading-note">Placeholder risk only. It is not based on your photo.</p>
+        </div>
+        <div class="result-layout">
+          <figure class="result-image-wrap">
+            <img id="result-image" src="" alt="ACRIMA dataset retinal image">
+            <figcaption><span class="result-image-mark" aria-hidden="true"></span> ACRIMA DATASET <span id="result-image-id">IMG--</span></figcaption>
+          </figure>
+          <div class="result-details">
+            <p class="eyebrow">SAMPLE GLAUCOMA RISK</p>
+            <div class="risk-number"><span id="risk-value">--</span><span>%</span></div>
+            <div id="risk-band" class="risk-band">Risk band</div>
+            <p id="recommendation" class="recommendation"></p>
+            <div class="result-stats">
+              <div class="stats-heading"><span>DEMO METRICS</span><small>Illustrative only</small></div>
+              <dl>
+                <div><dt>Cup-to-disc ratio</dt><dd id="stat-cdr">0.42</dd></div>
+                <div><dt>Nerve fibre layer</dt><dd id="stat-nfl">92 μm</dd></div>
+                <div><dt>Frames analysed</dt><dd id="stat-frames">--</dd></div>
+                <div><dt>Sharpness</dt><dd id="stat-sharpness">--%</dd></div>
+              </dl>
+            </div>
+            <button id="try-again" class="secondary-button" type="button"><span aria-hidden="true">↻</span> Try again</button>
+            <p class="disclaimer">Sample risk is paired with this ACRIMA image; it is not calculated from your camera photo. Screening is not a diagnosis.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer"><span>MONASH DEEPNEURON <i aria-hidden="true">·</i> PHAROS</span><span>Images: ACRIMA dataset (Diaz-Pinto et al., 2019)</span></footer>
+  </div>
+</body>
+</html>

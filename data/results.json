@@ -1,0 +1,182 @@
+[
+  {
+    "id": "img01",
+    "file": "assets/fundus/img01.jpg",
+    "label": "glaucoma",
+    "risk": 70
+  },
+  {
+    "id": "img02",
+    "file": "assets/fundus/img02.jpg",
+    "label": "normal",
+    "risk": 18
+  },
+  {
+    "id": "img03",
+    "file": "assets/fundus/img03.jpg",
+    "label": "normal",
+    "risk": 14
+  },
+  {
+    "id": "img04",
+    "file": "assets/fundus/img04.jpg",
+    "label": "glaucoma",
+    "risk": 73
+  },
+  {
+    "id": "img05",
+    "file": "assets/fundus/img05.jpg",
+    "label": "normal",
+    "risk": 5
+  },
+  {
+    "id": "img06",
+    "file": "assets/fundus/img06.jpg",
+    "label": "normal",
+    "risk": 29
+  },
+  {
+    "id": "img07",
+    "file": "assets/fundus/img07.jpg",
+    "label": "normal",
+    "risk": 16
+  },
+  {
+    "id": "img08",
+    "file": "assets/fundus/img08.jpg",
+    "label": "glaucoma",
+    "risk": 72
+  },
+  {
+    "id": "img09",
+    "file": "assets/fundus/img09.jpg",
+    "label": "normal",
+    "risk": 19
+  },
+  {
+    "id": "img10",
+    "file": "assets/fundus/img10.jpg",
+    "label": "normal",
+    "risk": 10
+  },
+  {
+    "id": "img11",
+    "file": "assets/fundus/img11.jpg",
+    "label": "glaucoma",
+    "risk": 77
+  },
+  {
+    "id": "img12",
+    "file": "assets/fundus/img12.jpg",
+    "label": "glaucoma",
+    "risk": 84
+  },
+  {
+    "id": "img13",
+    "file": "assets/fundus/img13.jpg",
+    "label": "normal",
+    "risk": 15
+  },
+  {
+    "id": "img14",
+    "file": "assets/fundus/img14.jpg",
+    "label": "glaucoma",
+    "risk": 95
+  },
+  {
+    "id": "img15",
+    "file": "assets/fundus/img15.jpg",
+    "label": "normal",
+    "risk": 16
+  },
+  {
+    "id": "img16",
+    "file": "assets/fundus/img16.jpg",
+    "label": "glaucoma",
+    "risk": 75
+  },
+  {
+    "id": "img17",
+    "file": "assets/fundus/img17.jpg",
+    "label": "glaucoma",
+    "risk": 71
+  },
+  {
+    "id": "img18",
+    "file": "assets/fundus/img18.jpg",
+    "label": "normal",
+    "risk": 23
+  },
+  {
+    "id": "img19",
+    "file": "assets/fundus/img19.jpg",
+    "label": "glaucoma",
+    "risk": 82
+  },
+  {
+    "id": "img20",
+    "file": "assets/fundus/img20.jpg",
+    "label": "glaucoma",
+    "risk": 69
+  },
+  {
+    "id": "img21",
+    "file": "assets/fundus/img21.jpg",
+    "label": "normal",
+    "risk": 6
+  },
+  {
+    "id": "img22",
+    "file": "assets/fundus/img22.jpg",
+    "label": "glaucoma",
+    "risk": 76
+  },
+  {
+    "id": "img23",
+    "file": "assets/fundus/img23.jpg",
+    "label": "glaucoma",
+    "risk": 89
+  },
+  {
+    "id": "img24",
+    "file": "assets/fundus/img24.jpg",
+    "label": "normal",
+    "risk": 19
+  },
+  {
+    "id": "img25",
+    "file": "assets/fundus/img25.jpg",
+    "label": "glaucoma",
+    "risk": 93
+  },
+  {
+    "id": "img26",
+    "file": "assets/fundus/img26.jpg",
+    "label": "normal",
+    "risk": 10
+  },
+  {
+    "id": "img27",
+    "file": "assets/fundus/img27.jpg",
+    "label": "glaucoma",
+    "risk": 78
+  },
+  {
+    "id": "img28",
+    "file": "assets/fundus/img28.jpg",
+    "label": "normal",
+    "risk": 6
+  },
+  {
+    "id": "img29",
+    "file": "assets/fundus/img29.jpg",
+    "label": "normal",
+    "risk": 14
+  },
+  {
+    "id": "img30",
+    "file": "assets/fundus/img30.jpg",
+    "label": "glaucoma",
+    "risk": 91
+  }
+]
