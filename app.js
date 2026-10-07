@@ -10,6 +10,7 @@ const stepItems = [...document.querySelectorAll(".step-item")];
 const startScreeningButton = document.querySelector("#start-screening");
 const captureButton = document.querySelector("#capture-button");
 const enableCameraButton = document.querySelector("#enable-camera");
+const flashStatus = document.querySelector("#flash-status");
 const captureStatus = document.querySelector("#capture-status");
 const cameraVideo = document.querySelector("#camera-video");
 const recordingVideo = document.querySelector("#recording-video");
@@ -48,6 +49,7 @@ const frames = [
 let records = [];
 let busy = false;
 let cameraStream = null;
+let flashActive = false;
 let currentPhotoUrl = null;
 let focusRunId = 0;
 let focusReady = false;
@@ -183,9 +185,16 @@ function stopCamera() {
   focusRunId += 1;
   focusReady = false;
   if (cameraStream) {
+    const videoTrack = cameraStream.getVideoTracks()[0];
+    if (videoTrack && flashActive) {
+      videoTrack.applyConstraints({ advanced: [{ torch: false }] }).catch(() => {});
+    }
     cameraStream.getTracks().forEach((track) => track.stop());
     cameraStream = null;
   }
+  flashActive = false;
+  flashStatus.textContent = "Flash will turn on automatically if supported.";
+  flashStatus.classList.remove("is-on");
   cameraVideo.srcObject = null;
   recordingVideo.srcObject = null;
   cameraVideo.hidden = true;
@@ -195,6 +204,29 @@ function stopCamera() {
   captureButton.classList.remove("is-ready");
   captureButton.disabled = true;
   document.querySelector("#camera-label").textContent = "CAMERA STANDBY";
+}
+
+async function enableFlash() {
+  const videoTrack = cameraStream?.getVideoTracks()[0];
+
+  try {
+    if (!videoTrack?.getCapabilities || !videoTrack.applyConstraints || !videoTrack.getCapabilities().torch) {
+      flashStatus.textContent = "Flash is unavailable on this camera or browser.";
+      flashStatus.classList.remove("is-on");
+      return false;
+    }
+
+    await videoTrack.applyConstraints({ advanced: [{ torch: true }] });
+    flashActive = true;
+    flashStatus.textContent = "Flash is on.";
+    flashStatus.classList.add("is-on");
+    return true;
+  } catch (error) {
+    flashActive = false;
+    flashStatus.textContent = "Flash could not be enabled on this camera.";
+    flashStatus.classList.remove("is-on");
+    return false;
+  }
 }
 
 function revokePhoto() {
@@ -219,6 +251,7 @@ async function enableCamera() {
     cameraVideo.srcObject = cameraStream;
     cameraVideo.hidden = false;
     await cameraVideo.play();
+    await enableFlash();
     recordingVideo.srcObject = cameraStream;
     cameraViewfinder.classList.add("is-live");
     document.querySelector("#camera-label").textContent = "LIVE CAMERA";

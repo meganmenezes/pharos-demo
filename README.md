@@ -6,7 +6,7 @@ Site: https://meganmenezes.github.io/pharos-demo/
 
 QR image: [assets/pharos-qr.png](assets/pharos-qr.png)
 
-A static, mobile-first retinal screening experience. It uses the browser camera for an on-device alignment and recording simulation; the captured photo stays temporarily in memory and is not uploaded or saved. Each review shows six distinct, randomized ACRIMA images. The sharpest image is shown with its own `risk` value from `data/results.json`. These deterministic, label-based risks and sample metrics are placeholders, not AI predictions or values calculated from the camera photo; the Pharos model is not run.
+A static, mobile-first retinal screening experience. It uses the browser camera for an on-device alignment and recording simulation and automatically requests the camera torch when the browser exposes torch control. The captured photo stays temporarily in memory and is not uploaded or saved. Each review shows six distinct, randomized ACRIMA images. The sharpest image is shown with its own `risk` value from `data/results.json`. These deterministic, label-based risks and sample metrics are placeholders, not AI predictions or values calculated from the camera photo; the Pharos model is not run.
 
 ## Prepare the sample data
 
