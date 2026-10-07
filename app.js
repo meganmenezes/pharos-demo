@@ -83,6 +83,18 @@ function getDemoResult() {
     || records.find((record) => record.risk === 23);
 }
 
+function getReviewRecords() {
+  const selected = getDemoResult();
+  const candidates = records.filter((record) => record.id !== selected.id);
+
+  for (let index = candidates.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(Math.random() * (index + 1));
+    [candidates[index], candidates[swapIndex]] = [candidates[swapIndex], candidates[index]];
+  }
+
+  return [...candidates.slice(0, filmFrames.length - 1), selected];
+}
+
 function loadImage(file) {
   return new Promise((resolve, reject) => {
     const image = new Image();
@@ -330,10 +342,13 @@ function setPipelineStep(activeStep) {
   });
 }
 
-function prepareFilmstrip(photoUrl) {
+function prepareFilmstrip(reviewRecords) {
   filmFrames.forEach((frame, index) => {
     const image = frame.querySelector("img");
-    image.src = photoUrl;
+    const record = reviewRecords[index];
+    image.src = record.file;
+    image.alt = `ACRIMA sample ${record.id}`;
+    frame.querySelector("span").textContent = record.id.toUpperCase();
     frame.classList.remove("is-current", "is-selected", "is-faded");
     image.style.filter = frames[index].filter;
   });
@@ -347,8 +362,9 @@ async function runPipeline(record) {
   showScreen("loading");
 
   try {
-    prepareFilmstrip(record.photoUrl);
-    const image = await loadImage(record.photoUrl);
+    const reviewRecords = getReviewRecords();
+    prepareFilmstrip(reviewRecords);
+    const reviewImages = await Promise.all(reviewRecords.map((sample) => loadImage(sample.file)));
     frameItems.forEach((item) => {
       item.classList.remove("is-current", "is-best");
       item.querySelector(".frame-score").textContent = "--";
@@ -356,10 +372,10 @@ async function runPipeline(record) {
     qualitySummary.hidden = true;
     analysisState.hidden = true;
     scanIndicator.classList.add("is-active");
-    pipelineStatus.textContent = "Frames received on this device.";
+    pipelineStatus.textContent = "Six ACRIMA samples loaded for local review.";
     frameCounter.textContent = `FRAME 01 / ${String(frames.length).padStart(2, "0")}`;
-    scanCaption.textContent = "Captured video ready for review";
-    drawFrame(image, frames[0], 0);
+    scanCaption.textContent = `${reviewRecords[0].id.toUpperCase()} · ACRIMA sample`;
+    drawFrame(reviewImages[0], frames[0], 0);
     await wait(420);
 
     setPipelineStep("sharpness");
@@ -367,13 +383,13 @@ async function runPipeline(record) {
 
     for (let index = 0; index < frames.length; index += 1) {
       const frame = frames[index];
-      drawFrame(image, frame, index);
+      drawFrame(reviewImages[index], frame, index);
       updateFrameItem(index, frame.score);
       filmFrames.forEach((filmFrame, filmIndex) => {
         filmFrame.classList.toggle("is-current", filmIndex === index);
       });
       frameCounter.textContent = `FRAME ${String(index + 1).padStart(2, "0")} / 06`;
-      scanCaption.textContent = `${frame.name} · quality ${frame.score}%`;
+      scanCaption.textContent = `${reviewRecords[index].id.toUpperCase()} · ${frame.name} · ${frame.score}%`;
       await wait(300);
     }
 
@@ -393,7 +409,7 @@ async function runPipeline(record) {
       filmFrame.classList.toggle("is-selected", index === bestIndex);
       filmFrame.classList.toggle("is-faded", index !== bestIndex);
     });
-    drawFrame(image, frames[bestIndex], bestIndex);
+    drawFrame(reviewImages[bestIndex], frames[bestIndex], bestIndex);
     frameCounter.textContent = "BEST FRAME / 06";
     scanCaption.textContent = "Best frame selected";
     pipelineStatus.textContent = "The sharpest frame is highlighted.";
