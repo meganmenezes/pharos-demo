@@ -78,21 +78,15 @@ function showScreen(name) {
   }
 }
 
-function getDemoResult() {
-  return records.find((record) => record.id === "img18" && record.risk === 23)
-    || records.find((record) => record.risk === 23);
-}
-
 function getReviewRecords() {
-  const selected = getDemoResult();
-  const candidates = records.filter((record) => record.id !== selected.id);
+  const candidates = [...records];
 
   for (let index = candidates.length - 1; index > 0; index -= 1) {
     const swapIndex = Math.floor(Math.random() * (index + 1));
     [candidates[index], candidates[swapIndex]] = [candidates[swapIndex], candidates[index]];
   }
 
-  return [...candidates.slice(0, filmFrames.length - 1), selected];
+  return candidates.slice(0, filmFrames.length);
 }
 
 function loadImage(file) {
@@ -297,7 +291,7 @@ function updateRecording() {
 }
 
 function startRecording() {
-  if (!focusReady || !cameraStream || busy || !getDemoResult()) return;
+  if (!focusReady || !cameraStream || busy || records.length < filmFrames.length) return;
   recording = true;
   capturedFrameCount = 0;
   recordingStartedAt = performance.now();
@@ -318,10 +312,9 @@ async function finishRecording() {
 
   try {
     const photoUrl = await capturePhoto();
-    const sample = getDemoResult();
-    if (!sample) throw new Error("The 23% ACRIMA sample is missing from results.json.");
+    if (records.length < filmFrames.length) throw new Error("Six ACRIMA samples are required for review.");
     stopCamera();
-    runPipeline({ photoUrl, sample, frameCount: capturedFrameCount });
+    runPipeline({ photoUrl, frameCount: capturedFrameCount });
   } catch (error) {
     busy = false;
     stopCamera();
@@ -364,7 +357,10 @@ async function runPipeline(record) {
   try {
     const reviewRecords = getReviewRecords();
     prepareFilmstrip(reviewRecords);
-    const reviewImages = await Promise.all(reviewRecords.map((sample) => loadImage(sample.file)));
+    const [cameraImage, ...reviewImages] = await Promise.all([
+      loadImage(record.photoUrl),
+      ...reviewRecords.map((sample) => loadImage(sample.file)),
+    ]);
     frameItems.forEach((item) => {
       item.classList.remove("is-current", "is-best");
       item.querySelector(".frame-score").textContent = "--";
@@ -372,7 +368,13 @@ async function runPipeline(record) {
     qualitySummary.hidden = true;
     analysisState.hidden = true;
     scanIndicator.classList.add("is-active");
-    pipelineStatus.textContent = "Six ACRIMA samples loaded for local review.";
+    pipelineStatus.textContent = "Camera capture stays on this device.";
+    frameCounter.textContent = "CAMERA / LOCAL";
+    scanCaption.textContent = "Local camera capture";
+    drawFrame(cameraImage, frames[5], 5);
+    await wait(420);
+
+    pipelineStatus.textContent = "Six distinct ACRIMA samples loaded for review.";
     frameCounter.textContent = `FRAME 01 / ${String(frames.length).padStart(2, "0")}`;
     scanCaption.textContent = `${reviewRecords[0].id.toUpperCase()} · ACRIMA sample`;
     drawFrame(reviewImages[0], frames[0], 0);
@@ -427,7 +429,7 @@ async function runPipeline(record) {
       item.classList.remove("is-current");
       item.classList.add("is-done");
     });
-    showResult(record.sample);
+    showResult(reviewRecords[bestIndex]);
   } catch (error) {
     showScreen("capture");
     enableCameraButton.disabled = false;
@@ -470,7 +472,7 @@ fetch(resultsFile)
   .then((data) => {
     if (!Array.isArray(data) || data.length === 0) throw new Error("No sample results are available.");
     records = data;
-    if (!getDemoResult()) throw new Error("The matching 23% ACRIMA sample is not available.");
+    if (records.length < filmFrames.length) throw new Error("At least six ACRIMA samples are required.");
   })
   .catch((error) => {
     captureStatus.textContent = "Placeholder risk data could not be loaded. Run prep_data.py and reload this page.";
